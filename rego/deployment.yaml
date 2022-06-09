@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-deployment
+  namespace: databases
+  labels:
+    app: registry
+    type: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rego
+  template:
+    metadata:
+      labels:
+        app: registry
+        type: database
+        app.kubernetes.io/name: rego
+    spec:
+      containers:
+        - name: registry
+          image: registry:2
+          ports:
+            - containerPort: 5000
+              name: rego-port
+          volumeMounts:
+            - name: nfs
+              mountPath: "/var/lib/registry"
+      volumes:
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: rego-nfs
