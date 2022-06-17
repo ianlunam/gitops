@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rego
+  namespace: databases
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ianlunam/gitops.git
+    targetRevision: HEAD
+    path: rego
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: databases
