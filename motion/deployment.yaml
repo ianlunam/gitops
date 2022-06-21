@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: motion-deployment
+  namespace: private
+  labels:
+    app: motion
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: motion
+  template:
+    metadata:
+      labels:
+        app: motion
+        app.kubernetes.io/name: motion
+    spec:
+      containers:
+        - name: motion
+          image: motionproject/motion
+          volumeMounts:
+            - name: nfs-store
+              mountPath: "/var/www/html/"
+            - name: nfs-config
+              mountPath: "/usr/local/etc/motion"
+      volumes:
+        - name: nfs-store
+          persistentVolumeClaim:
+            claimName: motion-nfs
+        - name: nfs-config
+          persistentVolumeClaim:
+            claimName: motion-nfs-config
