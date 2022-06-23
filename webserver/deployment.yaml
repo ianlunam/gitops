@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webserver-deployment
+  namespace: public
+  labels:
+    app: webserver
+    type: webserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: webserver
+  template:
+    metadata:
+      labels:
+        app: webserver
+        type: webserver
+        app.kubernetes.io/name: webserver
+    spec:
+      containers:
+        - name: webserver
+          image: 192.168.0.242:5000/myhttpd:latest
+          volumeMounts:
+            - name: nfs
+              mountPath: "/var/www"
+            - name: nfs-ian
+              mountPath: "/home/ian"
+            - name: nfs-httpd-vhosts
+              mountPath: "/etc/apache2/sites-enabled/"
+            - name: nfs-httpd-htpass
+              mountPath: "/etc/httpd/htpasswds/"
+            - name: nfs-letsencrypt
+              mountPath: "/etc/letsencrypt"
+            - name: nfs-cams
+              mountPath: "/var/www/html/lunam/gauge/data/"
+      volumes:
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: webserver-nfs
+        - name: nfs-ian
+          persistentVolumeClaim:
+            claimName: webserver-ian
+        - name: nfs-httpd-vhosts
+          persistentVolumeClaim:
+            claimName: webserver-httpd-vhosts
+        - name: nfs-httpd-htpass
+          persistentVolumeClaim:
+            claimName: webserver-httpd-htpass
+        - name: nfs-letsencrypt
+          persistentVolumeClaim:
+            claimName: webserver-letsencrypt
+        - name: nfs-cams
+          persistentVolumeClaim:
+            claimName: webserver-cams-nfs
